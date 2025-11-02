@@ -157,6 +157,65 @@ In Claude Desktop, you can simply ask:
 
 ## Troubleshooting
 
+### "can't open file" Error
+
+If you see an error like:
+```
+python.exe: can't open file 'C:\\..\\...\\server.py': [Errno 2] No such file or directory
+```
+
+**Common causes:**
+
+1. **Wrong file name**: Make sure you're pointing to `server.py`, not `ClaudeCodeTest.py` or any other file
+
+2. **Wrong path**: Verify the exact path to your `server.py` file
+   ```bash
+   # On Windows, in the project directory:
+   cd C:\Users\YourName\path\to\ClaudeCodeTest
+   echo %CD%\server.py
+
+   # On macOS/Linux:
+   pwd
+   ls -la server.py
+   ```
+
+3. **Non-ASCII characters in path** (한글, 中文, etc.): If your path contains non-ASCII characters like Korean "문서 정리 습관", they may cause encoding issues.
+
+   **Solutions:**
+   - **Option 1** (Recommended): Move the project to a path without special characters
+     ```bash
+     # Example: Move to a simpler path
+     C:\Users\siho8539\Projects\ClaudeCodeTest\server.py
+     ```
+
+   - **Option 2**: Use the short (8.3) path format on Windows
+     ```bash
+     # Get the short path
+     dir /x "C:\Users\siho8539\Desktop"
+     # Use the short name (like DOCUME~1 instead of "문서 정리 습관")
+     ```
+
+   - **Option 3**: Use forward slashes and raw string in JSON
+     ```json
+     {
+       "mcpServers": {
+         "echo-server": {
+           "command": "python",
+           "args": ["C:/Users/siho8539/Desktop/문서 정리 습관/Project/claude/ClaudeCodeTest/server.py"]
+         }
+       }
+     }
+     ```
+
+4. **Incorrect configuration example**:
+   ```json
+   ❌ Wrong:
+   "args": ["C:\\...\\ClaudeCodeTest.py"]  // Wrong file name
+
+   ✅ Correct:
+   "args": ["C:\\...\\ClaudeCodeTest\\server.py"]  // Correct file name
+   ```
+
 ### Server Not Appearing in Claude Desktop
 
 1. Check that the path to `server.py` is absolute, not relative
@@ -180,4 +239,25 @@ pip install -r requirements.txt
 Or install the MCP SDK directly:
 ```bash
 pip install mcp
-``` 
+```
+
+### Checking Claude Desktop Logs
+
+To see detailed error messages:
+
+**Windows:**
+1. Open Claude Desktop
+2. Press `Ctrl + Shift + I` to open Developer Tools
+3. Go to the Console tab
+4. Look for error messages in red
+
+**macOS:**
+1. Open Claude Desktop
+2. Press `Cmd + Option + I` to open Developer Tools
+3. Go to the Console tab
+4. Look for error messages
+
+Or check the log files:
+- **Windows**: `%APPDATA%\Claude\logs\`
+- **macOS**: `~/Library/Logs/Claude/`
+- **Linux**: `~/.config/Claude/logs/` 
